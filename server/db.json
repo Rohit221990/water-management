@@ -1,99 +1,28 @@
 {
   "waterLevels": [
     {
-      "id": 1755680458372,
-      "level": 75,
-      "timestamp": 1755680458372
-    },
-    {
-      "id": 1755680917032,
+      "name": "Building A",
       "level": 100,
-      "timestamp": 1755680917032
+      "capacity": 100,
+      "active": false
     },
     {
-      "id": 1755680937511,
-      "level": 101,
-      "timestamp": 1755680937511
+      "name": "Building B",
+      "level": 70,
+      "capacity": 70,
+      "active": false
     },
     {
-      "id": 1755680963526,
-      "level": 102,
-      "timestamp": 1755680963526
-    },
-    {
-      "id": 1755680987912,
-      "level": 10,
-      "timestamp": 1755680987912
-    },
-    {
-      "id": 1755681043792,
-      "level": 99,
-      "timestamp": 1755681043792
-    },
-    {
-      "id": 1755681137131,
-      "level": 98,
-      "timestamp": 1755681137131
-    },
-    {
-      "id": 1755681168892,
-      "level": 98,
-      "timestamp": 1755681168892
-    },
-    {
-      "id": 1755681624476,
-      "level": 118,
-      "timestamp": 1755681624476
-    },
-    {
-      "id": 1755682546702,
-      "level": 11,
-      "timestamp": 1755682546702
-    },
-    {
-      "id": 1755689804904,
-      "level": 98,
-      "timestamp": 1755689804904
-    },
-    {
-      "id": 1755689822848,
-      "level": 99,
-      "timestamp": 1755689822848
-    },
-    {
-      "id": 1755691822051,
-      "level": 11,
-      "timestamp": 1755691822051
-    },
-    {
-      "id": 1755692005852,
-      "level": 99,
-      "timestamp": 1755692005852
-    },
-    {
-      "id": 1755692025516,
+      "name": "Garden",
       "level": 100,
-      "timestamp": 1755692025516
+      "capacity": 100,
+      "active": false
     },
     {
-      "id": 1755692093327,
-      "level": 11,
-      "timestamp": 1755692093327
-    },
-    {
-      "id": 1755698939749,
-      "level": 100,
-      "timestamp": 1755698939749
-    },
-    {
-      "id": 1755698978942,
-      "level": 99,
-      "timestamp": 1755698978942
-    },
-    {
-      "id": 1755699002581,
-      "level": 98,
-      "timestamp": 1755699002581
+      "name": "Lab",
+      "level": 80,
+      "capacity": 80,
+      "active": false
     }
   ],
   "pumpStatus": {
@@ -109,9 +38,25 @@
     }
   ],
   "monthlyStats": [
-    { "month": "April-25", "last": 1500, "current": 1400 },
-    { "month": "Jun-25", "last": 1000, "current": 900 },
-    { "month": "July-25", "last": 1300, "current": 1200 },
-    { "month": "August-25", "last": 1400, "current": 1000 }
+    {
+      "month": "April-25",
+      "last": 1500,
+      "current": 1400
+    },
+    {
+      "month": "Jun-25",
+      "last": 1000,
+      "current": 900
+    },
+    {
+      "month": "July-25",
+      "last": 1300,
+      "current": 1200
+    },
+    {
+      "month": "August-25",
+      "last": 1400,
+      "current": 1000
+    }
   ]
 }

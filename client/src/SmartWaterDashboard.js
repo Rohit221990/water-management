@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -10,6 +10,9 @@ import {
 } from "recharts";
 import "./index.css";
 import DashboardPanel from "./system_alert";
+import DynamicBarChart from "./dynamicChart";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Example data for the chart
 const chartData = [
@@ -29,8 +32,94 @@ const initialRemotes = [
   { name: "Lab", active: true },
 ];
 
+// Water Tank component with SVG visualization
+function WaterTank({ name, level, capacity, onFill, onDrain, remotes }) {
+  const height = 180;
+  const width = 80;
+  const fillPercent = level / capacity;
+  const waterHeight = height * fillPercent;
+
+  // Find the remote corresponding to this tank name
+  const remote = remotes.find((r) => r.name === name);
+
+  return (
+    <div style={{ margin: 20, display: "inline-block", textAlign: "center" }}>
+      <svg
+        width={width}
+        height={height + 10}
+        style={{ background: "#f0f0f0", borderRadius: 12 }}
+      >
+        <rect
+          x={10}
+          y={10}
+          width={width - 20}
+          height={height}
+          rx={12}
+          fill="#a3a3a3"
+          stroke="#333"
+        />
+        {/* Water fill */}
+        <rect
+          x={10}
+          y={10 + height - waterHeight}
+          width={width - 20}
+          height={waterHeight}
+          rx={fillPercent === 1 ? 12 : 0}
+          fill="#00bfff"
+        />
+      </svg>
+      <div style={{ marginTop: 8 }}>
+        <b>{name}</b>
+        <div>
+          {level} / {capacity} L
+        </div>
+        {/* <button style={{ margin: 2 }} onClick={onFill}>
+            Fill +10L
+          </button> */}
+        {/* <button style={{ margin: 2 }} onClick={onDrain}>
+            Drain -10L
+          </button> */}
+      </div>
+    </div>
+  );
+}
+
+// Main component
 export default function FacilityDashboard() {
   const [remotes, setRemotes] = useState(initialRemotes);
+  const [fill, setFill] = useState(0);
+  const [drain, setDrain] = useState(0);
+
+  useEffect(() => {
+    // Increment water levels every second
+    const interval = setInterval(() => {
+      setTanks((prevTanks) =>
+        prevTanks.map((tank, i) => {
+          if (tank.level < tank.capacity && remotes[i] && remotes[i].active) {
+            // Increase water level by 5 litres per tick, limit to capacity
+            return { ...tank, level: Math.min(tank.level + 10, tank.capacity) };
+          }
+          if (remotes[i] && remotes[i].active) {
+            toast.success(`${tank.name} is full, please turn off the remote.`);
+          }
+          return tank;
+        })
+      );
+    }, 5000); // 1000ms = 1 second
+
+    // Clean up interval on unmount
+    return () => clearInterval(interval);
+  }, [remotes]);
+
+  const [tanks, setTanks] = useState([
+    { name: "Building A", level: 10, capacity: 100 },
+    { name: "Building B", level: 10, capacity: 70 },
+    { name: "Garden", level: 20, capacity: 100 },
+    { name: "Lab", level: 20, capacity: 80 },
+  ]);
+
+  const [newTankName, setNewTankName] = useState("");
+  const [newTankCapacity, setNewTankCapacity] = useState("");
 
   const toggleRemote = (index) => {
     setRemotes(
@@ -39,6 +128,55 @@ export default function FacilityDashboard() {
       )
     );
   };
+
+  const fillTank = (index) => {
+    setTanks((tanks) =>
+      tanks.map((tank, i) =>
+        i === index && tank.level < tank.capacity
+          ? { ...tank, level: Math.min(tank.level + 10, tank.capacity) }
+          : tank
+      )
+    );
+  };
+
+  const drainTank = (index) => {
+    setTanks((tanks) =>
+      tanks.map((tank, i) =>
+        i === index && tank.level > 0
+          ? { ...tank, level: Math.max(tank.level - 10, 0) }
+          : tank
+      )
+    );
+  };
+
+  const addTank = () => {
+    if (newTankName && newTankCapacity > 0) {
+      setTanks([
+        ...tanks,
+        {
+          name: newTankName.trim(),
+          level: 0,
+          capacity: Number(newTankCapacity),
+        },
+      ]);
+      setNewTankName("");
+      setNewTankCapacity("");
+      toast.success(`Added new tank: ${newTankName.trim()}`);
+    } else {
+      toast.error("Please enter a valid tank name and capacity");
+    }
+  };
+
+  async function handleApiCall() {
+    try {
+      const response = await fetch("/api/water-usage");
+      if (!response.ok) throw new Error("API call failed");
+      const data = await response.json();
+      toast.success(`Water usage: ${data.usage} litres`);
+    } catch (err) {
+      toast.error("Could not fetch water usage");
+    }
+  }
 
   return (
     <>
@@ -61,21 +199,6 @@ export default function FacilityDashboard() {
             <div style={{ color: "#74829c" }}>
               Real-time water management & analytics
             </div>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-            <button
-              style={{
-                border: "1px solid #e5e7eb",
-                borderRadius: 8,
-                background: "#fff",
-                padding: "6px 12px",
-                display: "flex",
-                alignItems: "center",
-                gap: 5,
-              }}
-            >
-              ⟳ Refresh
-            </button>
           </div>
         </div>
 
@@ -151,9 +274,9 @@ export default function FacilityDashboard() {
         </div>
 
         {/* Main content row */}
-        <div className="system-row">
+        <div className="system-row" style={{ display: "flex", gap: 30 }}>
           {/* Left Side - Chart */}
-          <div className="chart-area">
+          <div className="chart-area" style={{ flex: 2 }}>
             <div
               style={{ display: "flex", alignItems: "center", marginBottom: 8 }}
             >
@@ -209,7 +332,7 @@ export default function FacilityDashboard() {
           </div>
 
           {/* Right Side - Remote Controls */}
-          <div className="controls-card">
+          <div className="controls-card" style={{ flex: 1 }}>
             <div
               style={{
                 display: "flex",
@@ -268,6 +391,43 @@ export default function FacilityDashboard() {
             >
               <span style={{ fontSize: 19 }}>⏹️</span> Emergency Shutdown
             </button>
+          </div>
+        </div>
+
+        {/* Water Tanks section */}
+        <div style={{ marginTop: 50 }}>
+          <h2>Water Tanks</h2>
+          <div>
+            {tanks.map((tank, idx) => (
+              <WaterTank
+                key={idx}
+                name={tank.name}
+                level={tank.level}
+                capacity={tank.capacity}
+                onFill={() => fillTank(idx)}
+                onDrain={() => drainTank(idx)}
+                remotes={remotes}
+              />
+            ))}
+          </div>
+          {/* Add new tank */}
+          <div style={{ marginTop: 30 }}>
+            <input
+              type="text"
+              placeholder="New Tank Name"
+              value={newTankName}
+              onChange={(e) => setNewTankName(e.target.value)}
+              style={{ marginRight: 6 }}
+            />
+            <input
+              type="number"
+              placeholder="Capacity (L)"
+              min={1}
+              value={newTankCapacity}
+              onChange={(e) => setNewTankCapacity(e.target.value)}
+              style={{ marginRight: 6 }}
+            />
+            <button onClick={addTank}>Add New Tank</button>
           </div>
         </div>
       </div>

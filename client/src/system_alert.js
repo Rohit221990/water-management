@@ -41,7 +41,9 @@ export default function DashboardPanel() {
         boxShadow: "0 2px 10px rgba(32,40,64,0.07)",
         flex: 1.1,
         padding: 28,
-        minWidth: 0
+        minWidth: 0,
+        margin: "1.5rem"
+
       }}>
         <div style={{ display: "flex", alignItems: "center", marginBottom: 18 }}>
           <span style={{ fontSize: 23, marginRight: 8 }}>⚠️</span>
@@ -95,7 +97,8 @@ export default function DashboardPanel() {
           ))}
         </div>
       </div>
-
+      
+        {/* USAGE PANEL */}
       {/* MONTHLY PANEL */}
       <div style={{
         background: "#fff",
@@ -103,7 +106,8 @@ export default function DashboardPanel() {
         boxShadow: "0 2px 10px rgba(32,40,64,0.07)",
         flex: 1.7,
         padding: 28,
-        minWidth: 0
+        minWidth: 0,
+        margin: "1.5rem"
       }}>
         <div style={{ display: "flex", alignItems: "center", marginBottom: 12 }}>
           <span style={{ fontSize: 22, marginRight: 7 }}>🗓️</span>

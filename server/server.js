@@ -22,10 +22,17 @@ async function writeDB(data) {
 // Helper to read JSON data
 async function readDB() {
   try {
-    const json = await fs.readFile(DB_PATH, "utf-8");
-    return JSON.parse(json);
-  } catch {
-    return { waterLevels: [], pumpStatus: { id: 1, on: false } };
+    const data = await fs.readFile(DB_PATH, "utf8");
+    return JSON.parse(data);
+  } catch (err) {
+    console.error("Error reading DB file:", err);
+    // Return default if error reading file
+    return {
+      waterLevels: [],
+      pumpStatus: {},
+      alerts: [],
+      monthlyStats: [],
+    };
   }
 }
 
@@ -33,25 +40,57 @@ async function readDB() {
 app.get("/api/water-level", async (req, res) => {
   const db = await readDB();
   const history = db.waterLevels || [];
-  const latest = history.length ? history[history.length - 1].level : 0;
-  res.json({ level: latest });
+  res.json(history);
 });
+
+async function updateWaterLevels() {
+  try {
+    // Read current DB
+    const db = await readDB();
+    console.log("Current DB:", db);
+    // Sample update: increment level by 5 capped at capacity
+    const updatedWaterLevels = db.waterLevels.map((tank) => {
+      let newLevel = tank.level + 5;
+      if (newLevel > tank.capacity) newLevel = tank.capacity;
+      return { ...tank, level: newLevel };
+    });
+
+    // Update waterLevels in the db object
+    db.waterLevels = updatedWaterLevels;
+
+    // Write updated DB back to file
+    await writeDB(db);
+
+    console.log("DB updated with new water levels:", updatedWaterLevels);
+  } catch (err) {
+    console.error("Failed to update water levels:", err);
+  }
+}
+
+setInterval(updateWaterLevels, 5000);
 
 // POST new water level
 app.post("/api/water-level", async (req, res) => {
-  const { level } = req.body;
-  if (typeof level !== "number")
-    return res.status(400).json({ error: "Level must be a number" });
-
-  const db = await readDB();
-  db.waterLevels = db.waterLevels || [];
-  db.waterLevels.push({ id: Date.now(), level, timestamp: Date.now() });
-
   try {
+    const { waterLevels } = req.body; // Expecting array of tanks from client
+
+    if (!Array.isArray(waterLevels)) {
+      return res.status(400).json({ error: "Invalid waterLevels data" });
+    }
+
+    // Read current DB
+    const db = await readDB();
+
+    // Update existing water levels or store new one
+    db.waterLevels = waterLevels;
+
+    // Save updated DB
     await writeDB(db);
-    return res.json({ success: true, level });
+
+    res.json({ message: "Water levels updated successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Failed to save data" });
+    console.error("Error updating water levels:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 

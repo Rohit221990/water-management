@@ -2,8 +2,29 @@ import express from "express";
 import fs from "fs/promises";
 import path from "path";
 import cors from "cors";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import rateLimit from "express-rate-limit";
+import { Server } from "socket.io";
+import http from "http";
+import auth from "./routes/auth.js";
+import leaks from "./routes/leaks.js";
+import plumbers from "./routes/plumbers.js";
+import services from "./routes/services.js";
+import payments from "./routes/payments.js";
+import iot from "./routes/iot.js";
+
+dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
 app.use(express.json());
 
 app.use(cors()); // Enable CORS for all routes
@@ -125,6 +146,94 @@ app.post("/api/pump-control", async (req, res) => {
   db.pumpStatus = { id: 1, pumpOn };
   await writeDB(db);
   res.json({ success: true, pumpStatus: db.pumpStatus });
+});
+
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+
+  socket.on("join-staff", (staffId) => {
+    socket.join(`staff-${staffId}`);
+    console.log(`Staff ${staffId} joined room`);
+  });
+
+  socket.on("join-plumber", (plumberId) => {
+    socket.join(`plumber-${plumberId}`);
+    console.log(`Plumber ${plumberId} joined room`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
+});
+
+// Make io available globally
+app.set("io", io);
+
+// Connect to MongoDB
+mongoose
+  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/aquaflow")
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+// Routes
+app.use("/api/auth", auth);
+app.use("/api/leaks", leaks);
+app.use("/api/plumbers", plumbers);
+app.use("/api/services", services);
+app.use("/api/payments", payments);
+app.use("/api/iot", iot);
+
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    message: "AquaFlow API is running",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Default route
+app.get("/", (req, res) => {
+  res.json({
+    message: "Welcome to AquaFlow - Complete Water Management Solution",
+    version: "1.0.0",
+    endpoints: {
+      auth: "/api/auth",
+      leaks: "/api/leaks",
+      plumbers: "/api/plumbers",
+      services: "/api/services",
+      payments: "/api/payments",
+      iot: "/api/iot",
+    },
+  });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    message: "Something went wrong!",
+    error: process.env.NODE_ENV === "production" ? {} : err.message,
+  });
+});
+
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+
+  socket.on("send_message", (message) => {
+    console.log("Message received:", message);
+    // Broadcast message to all clients except sender
+    socket.broadcast.emit("receive_message", message);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
+});
+
+// Handle 404
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
 });
 
 app.listen(5000, () => {

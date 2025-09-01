@@ -13,6 +13,7 @@ import DashboardPanel from "./system_alert";
 import DynamicBarChart from "./dynamicChart";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Sidebar from "./Sidebar";
 
 // Example data for the chart
 const chartData = [
@@ -179,7 +180,7 @@ export default function FacilityDashboard() {
   }
 
   return (
-    <>
+    <div>
       <div className="dashboard">
         {/* Header */}
         <div
@@ -258,16 +259,6 @@ export default function FacilityDashboard() {
               style={{ display: "flex", alignItems: "center", gap: 8 }}
             >
               ₹20,584{" "}
-              <span style={{ color: "#a5a5aa", fontSize: 17, fontWeight: 400 }}>
-                this month
-              </span>
-              <span
-                role="img"
-                aria-label="lightning"
-                style={{ fontSize: 30, color: "#8b5cf6" }}
-              >
-                ⚡
-              </span>
             </div>
             <div className="inc">+₹1,494</div>
           </div>
@@ -432,6 +423,6 @@ export default function FacilityDashboard() {
         </div>
       </div>
       <DashboardPanel />
-    </>
+    </div>
   );
 }

@@ -13,6 +13,9 @@ import plumbers from "./routes/plumbers.js";
 import services from "./routes/services.js";
 import payments from "./routes/payments.js";
 import iot from "./routes/iot.js";
+import twilio from "twilio";
+import qs from "qs";
+import axios from "axios";
 
 dotenv.config();
 
@@ -229,6 +232,72 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
+});
+
+const forecastAlgo = (season) => {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const base = season === "summer" ? 100 : 50;
+  const seasonalAmp = season === "summer" ? 30 : 15;
+  const trend = season === "summer" ? 1.2 : 0.8;
+
+  return months.map((m, i) => {
+    const seasonal = seasonalAmp * Math.sin(((i + 2) / 12) * Math.PI * 2);
+    const noise = Math.random() * 8;
+    return {
+      month: m,
+      demand: Math.round(base + i * trend + seasonal + noise),
+    };
+  });
+};
+
+app.get("/forecast", (req, res) => {
+  const season = req.query.season || "summer";
+  res.json(forecastAlgo(season));
+});
+
+const accountSid =
+  process.env.TWILIO_ACCOUNT_SID; // Your Account SID
+const authToken =
+  process.env.TWILIO_AUTH_TOKEN ; // Your Auth Token
+const whatsappFrom =
+  process.env.TWILIO_WHATSAPP_NUMBER; // Sandbox
+const smsFrom = process.env.TWILIO_PHONE_NUMBER;
+const client = twilio(accountSid, authToken);
+
+async function sendMessage(to, body, type = "sms") {
+  try {
+    const from = type === "whatsapp" ? whatsappFrom : smsFrom;
+    const toFormatted = type === "whatsapp" ? `whatsapp:${to}` : to;
+
+    const message = await client.messages.create({
+      from,
+      to: toFormatted,
+      body,
+    });
+
+    console.log("Message sent! SID:", message.sid);
+  } catch (err) {
+    console.error("Twilio Error:", err.message);
+  }
+}
+
+app.post("/send-leak-alert", async (req, res) => {
+  const { tankName, plumbers } = req.body; // plumbers = array of {name, number, type}
+  const result = await sendMessage("+918441919957", "Leak detected in Building A!", "sms");
+  res.status(200).json({ message: result });
 });
 
 // Handle 404

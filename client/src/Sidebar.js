@@ -26,24 +26,44 @@ const navItems = [
     path: "/water-leak-detection",
   },
   {
-    id: "users",
-    label: "Users",
+    id: "forcast",
+    label: "Forecast",
     icon: (
       <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
         <path d="M12 12c2.2 0 4-1.8 4-4S14.2 4 12 4 8 5.8 8 8s1.8 4 4 4zm-4 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" />
       </svg>
     ),
-    path: "/users",
+    path: "/tanker-forecast",
   },
   {
-    id: "settings",
-    label: "Settings",
+    id: "leakdetection",
+    label: "LeakDetection",
+    icon: (
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <path d="M12 12c2.2 0 4-1.8 4-4S14.2 4 12 4 8 5.8 8 8s1.8 4 4 4zm-4 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" />
+      </svg>
+    ),
+    path: "/leak-detection",
+  },
+  {
+    id: "sensormanagement",
+    label: "Sensor Management",
     icon: (
       <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
         <path d="M7 11H3v2h4v-2zm10-4h-8c-1.1 0-2 .9-2 2v6h12v-6c0-1.1-.9-2-2-2z" />
       </svg>
     ),
-    path: "/settings",
+    path: "/sensor-management",
+  },
+    {
+    id: "locationholder",
+    label: "Location Management",
+    icon: (
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <path d="M7 11H3v2h4v-2zm10-4h-8c-1.1 0-2 .9-2 2v6h12v-6c0-1.1-.9-2-2-2z" />
+      </svg>
+    ),
+    path: "/location-management",
   },
 ];
 
@@ -179,7 +199,6 @@ export default function AISidebar() {
 
       <div className="container">
         <aside className={`sidebar${collapsed ? " collapsed" : ""}`}>
-          <div className={`logo${collapsed ? " collapsed" : ""}`}>Brand</div>
           <nav>
             {navItems.map(({ id, label, icon, path }) => (
               <NavLink

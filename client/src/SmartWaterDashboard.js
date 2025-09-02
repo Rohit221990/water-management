@@ -112,12 +112,17 @@ export default function FacilityDashboard() {
     return () => clearInterval(interval);
   }, [remotes]);
 
-  const [tanks, setTanks] = useState([
-    { name: "Building A", level: 10, capacity: 100 },
-    { name: "Building B", level: 10, capacity: 70 },
-    { name: "Garden", level: 20, capacity: 100 },
-    { name: "Lab", level: 20, capacity: 80 },
-  ]);
+const [tanks, setTanks] = useState(() => {
+  const saved = localStorage.getItem("tanks");
+  return saved
+    ? JSON.parse(saved)
+    : [
+        { name: "Building A", level: 10, capacity: 100 },
+        { name: "Building B", level: 10, capacity: 70 },
+        { name: "Garden", level: 20, capacity: 100 },
+        { name: "Lab", level: 20, capacity: 80 },
+      ];
+});
 
   const [newTankName, setNewTankName] = useState("");
   const [newTankCapacity, setNewTankCapacity] = useState("");
@@ -139,6 +144,12 @@ export default function FacilityDashboard() {
       )
     );
   };
+
+  // Persist changes to localStorage whenever tanks or remotes change
+useEffect(() => {
+  localStorage.setItem("tanks", JSON.stringify(tanks));
+}, [tanks]);
+
 
   const drainTank = (index) => {
     setTanks((tanks) =>

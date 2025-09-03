@@ -26,24 +26,14 @@ const navItems = [
     path: "/water-leak-detection",
   },
   {
-    id: "forcast",
-    label: "Forecast",
-    icon: (
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-        <path d="M12 12c2.2 0 4-1.8 4-4S14.2 4 12 4 8 5.8 8 8s1.8 4 4 4zm-4 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" />
-      </svg>
-    ),
-    path: "/tanker-forecast",
-  },
-  {
     id: "leakdetection",
-    label: "LeakDetection",
+    label: "Water Management",
     icon: (
       <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
         <path d="M12 12c2.2 0 4-1.8 4-4S14.2 4 12 4 8 5.8 8 8s1.8 4 4 4zm-4 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" />
       </svg>
     ),
-    path: "/leak-detection",
+    path: "/water-management",
   },
   {
     id: "sensormanagement",
@@ -55,16 +45,16 @@ const navItems = [
     ),
     path: "/sensor-management",
   },
-    {
-    id: "locationholder",
-    label: "Location Management",
+  {
+    id: "forcast",
+    label: "Water Forecast",
     icon: (
       <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-        <path d="M7 11H3v2h4v-2zm10-4h-8c-1.1 0-2 .9-2 2v6h12v-6c0-1.1-.9-2-2-2z" />
+        <path d="M12 12c2.2 0 4-1.8 4-4S14.2 4 12 4 8 5.8 8 8s1.8 4 4 4zm-4 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" />
       </svg>
     ),
-    path: "/location-management",
-  },
+    path: "/tanker-forecast",
+  }
 ];
 
 export default function AISidebar() {

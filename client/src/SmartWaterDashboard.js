@@ -29,8 +29,6 @@ const chartData = [
 const initialRemotes = [
   { name: "Building A", active: true },
   { name: "Building B", active: false },
-  { name: "Garden", active: true },
-  { name: "Lab", active: true },
 ];
 
 // Water Tank component with SVG visualization
@@ -112,17 +110,15 @@ export default function FacilityDashboard() {
     return () => clearInterval(interval);
   }, [remotes]);
 
-const [tanks, setTanks] = useState(() => {
-  const saved = localStorage.getItem("tanks");
-  return saved
-    ? JSON.parse(saved)
-    : [
-        { name: "Building A", level: 10, capacity: 100 },
-        { name: "Building B", level: 10, capacity: 70 },
-        { name: "Garden", level: 20, capacity: 100 },
-        { name: "Lab", level: 20, capacity: 80 },
-      ];
-});
+  const [tanks, setTanks] = useState(() => {
+    const saved = localStorage.getItem("tanks");
+    return saved
+      ? JSON.parse(saved)
+      : [
+          { name: "Building A", level: 10, capacity: 100 },
+          { name: "Building B", level: 10, capacity: 70 },
+        ];
+  });
 
   const [newTankName, setNewTankName] = useState("");
   const [newTankCapacity, setNewTankCapacity] = useState("");
@@ -146,10 +142,9 @@ const [tanks, setTanks] = useState(() => {
   };
 
   // Persist changes to localStorage whenever tanks or remotes change
-useEffect(() => {
-  localStorage.setItem("tanks", JSON.stringify(tanks));
-}, [tanks]);
-
+  useEffect(() => {
+    localStorage.setItem("tanks", JSON.stringify(tanks));
+  }, [tanks]);
 
   const drainTank = (index) => {
     setTanks((tanks) =>
@@ -163,16 +158,23 @@ useEffect(() => {
 
   const addTank = () => {
     if (newTankName && newTankCapacity > 0) {
-      setTanks([
-        ...tanks,
-        {
-          name: newTankName.trim(),
-          level: 0,
-          capacity: Number(newTankCapacity),
+      if (!newTankName || Number(newTankName) <= 0)
+        return toast.error("Enter valid name/capacity");
+
+      const newTank = {
+        name:newTankName,
+        level: 0,
+        capacity: Number(newTankCapacity),
+        plumbers: [],
+        location: {
+          lat: 28.61 + Math.random() * 0.05,
+          lng: 77.2 + Math.random() * 0.05,
         },
-      ]);
-      setNewTankName("");
-      setNewTankCapacity("");
+        leakActive: false,
+      };
+
+      setTanks((prev) => [...prev, newTank]);
+      setRemotes((prev) => [...prev, {name: newTankName, active: true }]); // Add corresponding remote
       toast.success(`Added new tank: ${newTankName.trim()}`);
     } else {
       toast.error("Please enter a valid tank name and capacity");
@@ -257,7 +259,7 @@ useEffect(() => {
               className="big-num"
               style={{ display: "flex", alignItems: "baseline", gap: 4 }}
             >
-              3 <span style={{ fontSize: 17, fontWeight: 400 }}>of 4</span>
+              {remotes.filter(r => r.active).length} <span style={{ fontSize: 17, fontWeight: 400 }}>of {remotes.length}</span>
             </div>
             <div style={{ color: "#9ca3af", fontWeight: 500, fontSize: 14 }}>
               No change

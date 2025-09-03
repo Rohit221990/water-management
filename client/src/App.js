@@ -34,7 +34,7 @@ const App = () => {
         <Route path="/staff-dashboard" element={<StaffDashboard />} />
         <Route path="/plumber-dashboard" element={<PlumberDashboard />} />
         <Route path="/tanker-forecast" element={<TankerDashboard />} />
-        <Route path="/leak-detection" element={<LeakDetectionDashboard />} />
+        <Route path="/water-management" element={<LeakDetectionDashboard />} />
         <Route path="/sensor-management" element={<ModernSensorManagement />} />
         <Route path ="/location-management" element={<LocationHolder />} />
         {/* Add other routes as needed */}

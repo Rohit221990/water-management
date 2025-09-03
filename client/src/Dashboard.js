@@ -494,26 +494,6 @@ const WaterLeakDetection = () => {
               From IoT sensor alerts to verified plumber services - AquaFlow
               handles it all
             </p>
-
-            <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded mb-6 leakDetectorSimulator">
-              <div className="flex items-center">
-                <FaExclamationTriangle className="text-red-500 text-2xl mr-4" />
-                <div className="text-left">
-                  <h3 className="text-lg font-semibold text-red-800">
-                    Leak Detection Simulator
-                  </h3>
-                  <p className="text-red-700">
-                    Simulate a water leak detection and service request
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={simulateLeakDetection}
-                className="mt-4 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition duration-300"
-              >
-                <FaPlay className="mr-2" /> Simulate Leak Detection
-              </button>
-            </div>
           </div>
         </div>
 
@@ -521,7 +501,9 @@ const WaterLeakDetection = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <div className="text-center">
-              <FaSatelliteDish className="text-4xl text-blue-500 mb-4" />
+              <div style={{ textAlign: "-webkit-center" }}>
+                <FaSatelliteDish className="text-4xl text-blue-500 mb-4" />
+              </div>
               <h3 className="text-xl font-semibold mb-2">
                 IoT Sensor Integration
               </h3>
@@ -532,7 +514,9 @@ const WaterLeakDetection = () => {
           </div>
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <div className="text-center">
-              <FaMapMarkerAlt className="text-4xl text-green-500 mb-4" />
+              <div style={{ textAlign: "-webkit-center" }}>
+                <FaMapMarkerAlt className="text-4xl text-green-500 mb-4" />
+              </div>
               <h3 className="text-xl font-semibold mb-2">
                 Smart Plumber Matching
               </h3>
@@ -543,7 +527,9 @@ const WaterLeakDetection = () => {
           </div>
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <div className="text-center">
-              <FaCreditCard className="text-4xl text-purple-500 mb-4" />
+              <div style={{ textAlign: "-webkit-center" }}>
+                <FaCreditCard className="text-4xl text-purple-500 mb-4" />
+              </div>
               <h3 className="text-xl font-semibold mb-2">
                 Integrated Payments
               </h3>

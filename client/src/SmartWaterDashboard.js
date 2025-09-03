@@ -162,7 +162,7 @@ export default function FacilityDashboard() {
         return toast.error("Enter valid name/capacity");
 
       const newTank = {
-        name:newTankName,
+        name: newTankName,
         level: 0,
         capacity: Number(newTankCapacity),
         plumbers: [],
@@ -174,7 +174,7 @@ export default function FacilityDashboard() {
       };
 
       setTanks((prev) => [...prev, newTank]);
-      setRemotes((prev) => [...prev, {name: newTankName, active: true }]); // Add corresponding remote
+      setRemotes((prev) => [...prev, { name: newTankName, active: true }]); // Add corresponding remote
       toast.success(`Added new tank: ${newTankName.trim()}`);
     } else {
       toast.error("Please enter a valid tank name and capacity");
@@ -259,7 +259,10 @@ export default function FacilityDashboard() {
               className="big-num"
               style={{ display: "flex", alignItems: "baseline", gap: 4 }}
             >
-              {remotes.filter(r => r.active).length} <span style={{ fontSize: 17, fontWeight: 400 }}>of {remotes.length}</span>
+              {remotes.filter((r) => r.active).length}{" "}
+              <span style={{ fontSize: 17, fontWeight: 400 }}>
+                of {remotes.length}
+              </span>
             </div>
             <div style={{ color: "#9ca3af", fontWeight: 500, fontSize: 14 }}>
               No change
@@ -414,14 +417,33 @@ export default function FacilityDashboard() {
               />
             ))}
           </div>
-          {/* Add new tank */}
-          <div style={{ marginTop: 30 }}>
+          {/* Add New Tank - Professional UI */}
+          <div
+            style={{
+              marginTop: 30,
+              padding: 20,
+              borderRadius: 12,
+              background: "#f9fafb",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              maxWidth: 500,
+            }}
+          >
             <input
               type="text"
-              placeholder="New Tank Name"
+              placeholder="Tank Name"
               value={newTankName}
               onChange={(e) => setNewTankName(e.target.value)}
-              style={{ marginRight: 6 }}
+              style={{
+                flex: 2,
+                padding: 10,
+                borderRadius: 8,
+                border: "1px solid #d1d5db",
+                outline: "none",
+                fontSize: 14,
+              }}
             />
             <input
               type="number"
@@ -429,9 +451,40 @@ export default function FacilityDashboard() {
               min={1}
               value={newTankCapacity}
               onChange={(e) => setNewTankCapacity(e.target.value)}
-              style={{ marginRight: 6 }}
+              style={{
+                flex: 1,
+                padding: 10,
+                borderRadius: 8,
+                border: "1px solid #d1d5db",
+                outline: "none",
+                fontSize: 14,
+              }}
             />
-            <button onClick={addTank}>Add New Tank</button>
+            <button
+              onClick={addTank}
+              style={{
+                flex: "none",
+                padding: "10px 16px",
+                borderRadius: 8,
+                backgroundColor: "#2563eb",
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: 14,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                transition: "background-color 0.2s",
+              }}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.backgroundColor = "#1e40af")
+              }
+              onMouseOut={(e) =>
+                (e.currentTarget.style.backgroundColor = "#2563eb")
+              }
+            >
+              <span style={{ fontSize: 16 }}>➕</span> Add Tank
+            </button>
           </div>
         </div>
       </div>

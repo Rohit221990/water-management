@@ -54,7 +54,7 @@ const navItems = [
       </svg>
     ),
     path: "/tanker-forecast",
-  }
+  },
 ];
 
 export default function AISidebar() {
@@ -189,6 +189,28 @@ export default function AISidebar() {
 
       <div className="container">
         <aside className={`sidebar${collapsed ? " collapsed" : ""}`}>
+          <div
+            className={`logo${collapsed ? " collapsed" : ""}`}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: 32,
+            }}
+          >
+            <img
+              src="/logo.png" // Replace with your logo path
+              alt="Logo"
+              style={{
+                width: collapsed ? 32 : 40,
+                height: collapsed ? 32 : 40,
+                marginRight: collapsed ? 0 : 10,
+                borderRadius: 8,
+                transition: "all 0.3s ease",
+              }}
+            />
+            {!collapsed && <span>Smart Water</span>}
+          </div>
           <nav>
             {navItems.map(({ id, label, icon, path }) => (
               <NavLink

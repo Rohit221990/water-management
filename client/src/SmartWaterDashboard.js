@@ -13,6 +13,7 @@ import DashboardPanel from "./system_alert";
 import DynamicBarChart from "./dynamicChart";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Sidebar from "./Sidebar";
 
 // Example data for the chart
 const chartData = [
@@ -28,8 +29,6 @@ const chartData = [
 const initialRemotes = [
   { name: "Building A", active: true },
   { name: "Building B", active: false },
-  { name: "Garden", active: true },
-  { name: "Lab", active: true },
 ];
 
 // Water Tank component with SVG visualization
@@ -111,12 +110,15 @@ export default function FacilityDashboard() {
     return () => clearInterval(interval);
   }, [remotes]);
 
-  const [tanks, setTanks] = useState([
-    { name: "Building A", level: 10, capacity: 100 },
-    { name: "Building B", level: 10, capacity: 70 },
-    { name: "Garden", level: 20, capacity: 100 },
-    { name: "Lab", level: 20, capacity: 80 },
-  ]);
+  const [tanks, setTanks] = useState(() => {
+    const saved = localStorage.getItem("tanks");
+    return saved
+      ? JSON.parse(saved)
+      : [
+          { name: "Building A", level: 10, capacity: 100 },
+          { name: "Building B", level: 10, capacity: 70 },
+        ];
+  });
 
   const [newTankName, setNewTankName] = useState("");
   const [newTankCapacity, setNewTankCapacity] = useState("");
@@ -139,6 +141,11 @@ export default function FacilityDashboard() {
     );
   };
 
+  // Persist changes to localStorage whenever tanks or remotes change
+  useEffect(() => {
+    localStorage.setItem("tanks", JSON.stringify(tanks));
+  }, [tanks]);
+
   const drainTank = (index) => {
     setTanks((tanks) =>
       tanks.map((tank, i) =>
@@ -151,16 +158,23 @@ export default function FacilityDashboard() {
 
   const addTank = () => {
     if (newTankName && newTankCapacity > 0) {
-      setTanks([
-        ...tanks,
-        {
-          name: newTankName.trim(),
-          level: 0,
-          capacity: Number(newTankCapacity),
+      if (!newTankName || Number(newTankName) <= 0)
+        return toast.error("Enter valid name/capacity");
+
+      const newTank = {
+        name: newTankName,
+        level: 0,
+        capacity: Number(newTankCapacity),
+        plumbers: [],
+        location: {
+          lat: 28.61 + Math.random() * 0.05,
+          lng: 77.2 + Math.random() * 0.05,
         },
-      ]);
-      setNewTankName("");
-      setNewTankCapacity("");
+        leakActive: false,
+      };
+
+      setTanks((prev) => [...prev, newTank]);
+      setRemotes((prev) => [...prev, { name: newTankName, active: true }]); // Add corresponding remote
       toast.success(`Added new tank: ${newTankName.trim()}`);
     } else {
       toast.error("Please enter a valid tank name and capacity");
@@ -179,7 +193,7 @@ export default function FacilityDashboard() {
   }
 
   return (
-    <>
+    <div>
       <div className="dashboard">
         {/* Header */}
         <div
@@ -245,7 +259,10 @@ export default function FacilityDashboard() {
               className="big-num"
               style={{ display: "flex", alignItems: "baseline", gap: 4 }}
             >
-              3 <span style={{ fontSize: 17, fontWeight: 400 }}>of 4</span>
+              {remotes.filter((r) => r.active).length}{" "}
+              <span style={{ fontSize: 17, fontWeight: 400 }}>
+                of {remotes.length}
+              </span>
             </div>
             <div style={{ color: "#9ca3af", fontWeight: 500, fontSize: 14 }}>
               No change
@@ -258,16 +275,6 @@ export default function FacilityDashboard() {
               style={{ display: "flex", alignItems: "center", gap: 8 }}
             >
               ₹20,584{" "}
-              <span style={{ color: "#a5a5aa", fontSize: 17, fontWeight: 400 }}>
-                this month
-              </span>
-              <span
-                role="img"
-                aria-label="lightning"
-                style={{ fontSize: 30, color: "#8b5cf6" }}
-              >
-                ⚡
-              </span>
             </div>
             <div className="inc">+₹1,494</div>
           </div>
@@ -410,14 +417,33 @@ export default function FacilityDashboard() {
               />
             ))}
           </div>
-          {/* Add new tank */}
-          <div style={{ marginTop: 30 }}>
+          {/* Add New Tank - Professional UI */}
+          <div
+            style={{
+              marginTop: 30,
+              padding: 20,
+              borderRadius: 12,
+              background: "#f9fafb",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              maxWidth: 500,
+            }}
+          >
             <input
               type="text"
-              placeholder="New Tank Name"
+              placeholder="Tank Name"
               value={newTankName}
               onChange={(e) => setNewTankName(e.target.value)}
-              style={{ marginRight: 6 }}
+              style={{
+                flex: 2,
+                padding: 10,
+                borderRadius: 8,
+                border: "1px solid #d1d5db",
+                outline: "none",
+                fontSize: 14,
+              }}
             />
             <input
               type="number"
@@ -425,13 +451,44 @@ export default function FacilityDashboard() {
               min={1}
               value={newTankCapacity}
               onChange={(e) => setNewTankCapacity(e.target.value)}
-              style={{ marginRight: 6 }}
+              style={{
+                flex: 1,
+                padding: 10,
+                borderRadius: 8,
+                border: "1px solid #d1d5db",
+                outline: "none",
+                fontSize: 14,
+              }}
             />
-            <button onClick={addTank}>Add New Tank</button>
+            <button
+              onClick={addTank}
+              style={{
+                flex: "none",
+                padding: "10px 16px",
+                borderRadius: 8,
+                backgroundColor: "#2563eb",
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: 14,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                transition: "background-color 0.2s",
+              }}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.backgroundColor = "#1e40af")
+              }
+              onMouseOut={(e) =>
+                (e.currentTarget.style.backgroundColor = "#2563eb")
+              }
+            >
+              <span style={{ fontSize: 16 }}>➕</span> Add Tank
+            </button>
           </div>
         </div>
       </div>
       <DashboardPanel />
-    </>
+    </div>
   );
 }

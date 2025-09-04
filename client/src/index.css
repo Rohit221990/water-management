@@ -1,3 +1,8 @@
+@tailwind base;
+/* @tailwind components; */
+@tailwind utilities;
+
+
 body {
   background: #f6f8fb;
   font-family: 'Inter', 'Roboto', Arial, sans-serif;
@@ -164,3 +169,54 @@ body {
     min-width: 0;
   }
 }
+
+:root {
+  --bg-color: #ffffff;             /* white background */
+  --sidebar-bg: #f8f9fa;           /* light gray sidebar background */
+  --accent: #4f46e5;               /* modern blue accent */
+  --text-dark: #2c3e50;            /* dark text color */
+  --text-muted: #7f8c8d;           /* muted gray text */
+  --nav-width: 260px;
+  --nav-width-collapsed: 72px;
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sidebar {
+  background-color: var(--sidebar-bg);
+  color: var(--text-dark);
+  box-shadow: 2px 0 12px rgba(79, 70, 229, 0.15);
+}
+
+.logo {
+  color: var(--accent);
+}
+
+nav a {
+  color: var(--text-dark);
+}
+
+nav a:hover, nav a.active {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 12px var(--accent);
+}
+
+nav a svg {
+  stroke: var(--accent);
+}
+
+nav a:hover svg, nav a.active svg {
+  stroke: white;
+}
+
+body, #root {
+  background: var(--bg-color);
+  color: var(--text-dark);
+  height: 100%;
+}
+
+.leakDetectorSimulator {
+    display: flex;
+    justify-content: space-between;
+}
+

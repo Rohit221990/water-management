@@ -33,71 +33,7 @@ export default function DashboardPanel() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div style={{ display: "flex", gap: 24 }}>
-      {/* ALERTS PANEL */}
-      <div style={{
-        background: "#fff",
-        borderRadius: 20,
-        boxShadow: "0 2px 10px rgba(32,40,64,0.07)",
-        flex: 1.1,
-        padding: 28,
-        minWidth: 0,
-        margin: "1.5rem"
-
-      }}>
-        <div style={{ display: "flex", alignItems: "center", marginBottom: 18 }}>
-          <span style={{ fontSize: 23, marginRight: 8 }}>⚠️</span>
-          <span style={{ fontWeight: 700, fontSize: 19 }}>System Alerts</span>
-          <span style={{
-            background: "#dc2626",
-            color: "white",
-            marginLeft: 12,
-            fontSize: 15,
-            borderRadius: 8,
-            fontWeight: 600,
-            padding: "4px 16px"
-          }}>
-            {alerts.filter(a => a.level === "high").length} Critical
-          </span>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {alerts.map(alert => (
-            <div key={alert.id}
-              style={{
-                borderRadius: 12,
-                padding: "18px 16px 16px 16px",
-                background: levelColors[alert.level],
-                border: `2px solid ${borderColors[alert.level]}`,
-                marginBottom: 0,
-                display: "flex",
-                flexDirection: "column"
-              }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 19 }}>⚠️</span>
-                <span style={{ flex: 1, fontWeight: 500, fontSize: 16 }}>{alert.message}</span>
-                <a href="#resolve" style={{
-                  color: "#333", fontWeight: 500,
-                  fontSize: 15, textDecoration: "underline", marginLeft: 14
-                }}>Resolve</a>
-              </div>
-              <div style={{ marginTop: 5, display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ color: "#666", fontSize: 15 }}>{alert.time}</span>
-                <span style={{
-                  background: "#f5f5f5",
-                  color: "#222",
-                  fontWeight: 500,
-                  fontSize: 15,
-                  borderRadius: 8,
-                  padding: "2px 12px"
-                }}>
-                  {alert.level}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      
+    <div style={{ display: "flex", gap: 24 }}>      
         {/* USAGE PANEL */}
       {/* MONTHLY PANEL */}
       <div style={{
